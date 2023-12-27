@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mouse Tracking</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #f4f4f4;
+      }
+      canvas {
+        display: block;
+      }
+      #overlayCanvas {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 100px;
+        height: 100px;
+        background-color: rgb(237, 137, 80);
+        z-index: 999;
+        transform: translate(-50%, -50%);
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="mouseCanvas"></canvas>
+    <canvas id="overlayCanvas" onclick="alert(1)"></canvas>
+
+    <script>
+      const canvas = document.getElementById("mouseCanvas");
+      const ctx = canvas.getContext("2d");
+
+      const overlayCanvas = document.getElementById("overlayCanvas");
+      const overlayCtx = overlayCanvas.getContext("2d");
+
+      // 设置 canvas 的宽度和高度为窗口的宽度和高度
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      // 设置 overlayCanvas 的宽度和高度
+      overlayCanvas.width = 100;
+      overlayCanvas.height = 100;
+
+      // 监听窗口大小变化，调整 canvas 大小
+      window.addEventListener("resize", () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+
+      // 记录鼠标坐标的数组
+      const mouseCoordinates = [];
+
+      setTimeout(() => {
+        // 监听鼠标移动事件
+        window.addEventListener("mousemove", (e) => {
+          // 获取鼠标在窗口中的坐标
+          const mouseX = e.clientX;
+          const mouseY = e.clientY;
+
+          // 记录鼠标坐标
+          mouseCoordinates.push({ x: mouseX, y: mouseY });
+
+          // 绘制线条
+          drawLine();
+        });
+      }, 2000);
+      // 绘制线条函数
+      function drawLine() {
+        // 清空 canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 设置线条样式
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 2;
+        ctx.lineJoin = "round";
+
+        // 开始绘制路径
+        ctx.beginPath();
+
+        // 将鼠标坐标连接起来形成轨迹
+        for (let i = 0; i < mouseCoordinates.length; i++) {
+          const { x, y } = mouseCoordinates[i];
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        // 结束路径并绘制
+        ctx.stroke();
+      }
+    </script>
+  </body>
+</html>
